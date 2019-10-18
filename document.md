@@ -1,6 +1,4 @@
----
-typora-root-url: introduce
----
+
 
 Unit_one.py 三种插值方式：
 1. 最近邻插值： 
@@ -15,24 +13,24 @@ Unit_one.py 三种插值方式：
 2. 双线性插值：
     在x ， y轴上都使用一次插值，如图：
 
-​      ![double_insert](/double_insert.png)
+​     ![](F:\project\Digital_Image_Processing\introduce\double_insert.png)
 
 假如我们想得到未知函数 f 在点 P = (x, y) 的值，假设我们已知函数 f 在 Q11 = (x1, y1)、Q12 = (x1, y2), Q21 = (x2, y1) 以及 Q22 = (x2, y2) 四个点的值。最常见的情况，f就是一个像素点的像素值。首先在 x 方向进行线性插值，得到
 
 
-![fountion1](/fountion1.png)
+![](F:\project\Digital_Image_Processing\introduce\fountion1.png)
 
-​                   		  ![fountion2](/fountion2.png)
+​                   		  ![](F:\project\Digital_Image_Processing\introduce\fountion2.png)
 
  然后在 y 方向进行线性插值，得到 
 
-​					![fountion3](/fountion3.png)
+​				![](F:\project\Digital_Image_Processing\introduce\fountion3.png)
 
  综合起来就是双线性插值最后的结果： 
 
-​				![fountion4](/fountion4.png)
+​				![](F:\project\Digital_Image_Processing\introduce\fountion4.png)
 
-​				![fountion5](/fountion5.png)
+​				![](F:\project\Digital_Image_Processing\introduce\fountion5.png)
 
 [参考这里](https://blog.csdn.net/xbinworld/article/details/65660665)
 
@@ -46,7 +44,7 @@ Unit_one.py 三种插值方式：
 
 
 
-![info](/info.png)
+![](F:\project\Digital_Image_Processing\introduce\info.png)
 
 图像来源于[这篇](https://blog.csdn.net/qq_39683287/article/details/80288872)博客
 
@@ -62,7 +60,6 @@ Unit_one.py 三种插值方式：
 
 3. 算法优化，在计算时将小数通过放大取整，最后在缩小相应的倍数，通常是2的倍数，这样在缩小时就可以通过移位的操作实现。我用python实现，发现效果并不是特别明显。
 
-4. 思考：既然可以通过4个点和16个点的操作进行插值，是不是也可以通过最近的9个点来计算呢：
+4. 思考：既然可以通过4个点和16个点的操作进行插值，是不是也可以通过最近的9个点来计算呢，这样相比于双三次内插来说可以减少计算量。
 
    我的想法是，通过正太分布确定各个像素点的权重，在通过相加来求出这点的像素值。（有时间再来实现看看效果）
-
