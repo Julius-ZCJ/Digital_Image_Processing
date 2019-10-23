@@ -10,6 +10,11 @@ import cv2
 import time
 
 class Operator():
+    """
+        1.图像原点是右上角的，导致上下移动和旋转都是以右上角为中心的进行而不是图像中心。
+        2.图像放射变换时，前向映射会导致输出图片有很多未填充的像素
+        3.反向映射时，也会有很明显的边缘锯齿。
+    """
     @staticmethod
     def scale_operator(multiple):
         operator = np.zeros((3,3))
@@ -57,7 +62,7 @@ class Operator():
         return operator
     
 
-def wolberg_transform(img, operator):
+def wolberg_transform(img, operator):# 前向映射
     
     h, w = img.shape[:2]
     print(h,w)
@@ -73,12 +78,30 @@ def wolberg_transform(img, operator):
     print(new_img, type(new_img))
     return new_img
 
+def wolbegr_convert(img, operator): # 反向映射
+    h,w = img.shape[:2]
+    print(h,w)
+    new_img = np.zeros(img.shape)
+    for x in range(w):
+        for y in range(h):
+            trans = np.dot(np.array([y, x, 1]), np.linalg.inv(operator))
+            try:
+                if (int(trans[0]) < 0 or int(trans[1]) < 0):
+                    continue
+                else:
+                    new_img[y][x] = img[int(trans[0])][int(trans[1])]
+            except:
+                pass
+    new_img = np.array(new_img, np.uint8)
+    return new_img
+
 if __name__=='__main__':
+
     path = r'ImageData\insert\test.jpg'
-    operator = Operator.vertical_bias_operator(0.2)
+    operator = Operator.scale_operator(2)
     img = cv2.imread(path)
-    new_img = wolberg_transform(img, operator)
-    cv2.imwrite(r'ImageData\insert\vertical_bias_operator.jpg',new_img)
+    new_img = wolbegr_convert(img, operator)
+    cv2.imwrite(r'ImageData\insert\scale_operator_1.jpg',new_img)
 
 
 
