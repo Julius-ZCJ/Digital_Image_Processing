@@ -65,7 +65,7 @@ def logarithm_transform(img, constant=45):
     new_img = np.uint8(constant*np.log(1+img)+0.5)
     return new_img
 
-def power_transform(img, constant_c, constant_r):
+def power_transform(img, constant_c=0.000015, constant_r=3.0):
     """
     幂律变换又称为伽马变换（gamma）
     1.调节r值改变函数形状，调节c值为了将像素映射到0-255
@@ -133,9 +133,41 @@ def contrastStretch(img, coord_1, coord_2):
     
     return new_img
     
-    
+
+def grey_hierarchy(img, x1, x2):
+    """
+    提取感兴趣的灰度层进行增强
+    """
+    h, w = img.shape[0:2]
+    new_img = np.zeros(img.shape, np.uint8)
+    for i in range(h):
+        for j in  range(w):
+            if img[i][j]>x1 and img[i][j]<x2:
+                new_img[i][j] = 255
+            else:
+                new_img[i][j] = 0
+                
+    return new_img
+
+def bit_hierarchy(img):
+    """
+    比特分层，将图片一分为8，各个图像都是二值图像
+    应用于图像压缩
+    """
+    h, w = img.shape[:2]
+    new_img = np.zeros((h, w, 8))
+    for i in range(h):
+        for j in range(w):
+            n = str(np.binary_repr(img[i,j],8))  # 先转换为二进制，在转为str
+            for k in range(8):
+                new_img[i,j,k] = n[k]
+                
+    bit_img_list = []
+    for i in range(8):
+        bit_img_list.append(new_img[:,:,i])
+    return bit_img_list
 def main():
-    
+
     
     path = r'../ImageData\ch02\bubbles.tif'
     img =cv2.imread(path)
@@ -152,14 +184,27 @@ def main():
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     power_transform(img, 0.000015, 3.0)
     
+    path = r'../ImageData\ch03\breast.tif'
+    img =cv2.imread(path)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    contrastStretch(img, (96, 32), (160, 224))
     
+    path = r'../ImageData\ch03\DIP3E_CH03_Original_Images\Fig0312(a)(kidney).tif'
+    img =cv2.imread(path)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    grey_hierarchy(img, 150, 240)
+    
+    path = r'../ImageData\ch03\DIP3E_CH03_Original_Images\Fig0314(a)(100-dollars).tif'
+    img =cv2.imread(path)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    new_img = bit_hierarchy(img)
+    for i in range(8):
+        cv2.imshow('results/bit_hierarchy'+str(i)+'.jpg', new_img[i])
+        cv2.waitKey(4)
     
 
 if __name__=='__main__':
-    path = r'../ImageData\ch03\breast.tif'
-    path = 'logarithm_thansform.jpg'
+    path = r'../ImageData\ch02\bubbles.tif'
     img =cv2.imread(path)
-    print(img.shape)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    new_img = contrastStretch(img, (96, 32), (160, 224))
-    cv2.imwrite('contrastStretch.jpg', new_img)
+    unknow_transform(img)
